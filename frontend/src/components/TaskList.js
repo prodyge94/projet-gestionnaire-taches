@@ -32,3 +32,16 @@ const TaskList = ({ tasks, onEditTask }) => {
               statusTasks.map(task => (
                 <TaskCard
                   key={task.id}
+				  task={task}
+                  onEditTask={onEditTask}
+                />
+              ))
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export default TaskList;
