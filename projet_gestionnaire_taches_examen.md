@@ -64,8 +64,8 @@ projet-gestionnaire-taches/
 
 **Bonus(non obligatoire)**
 ```
-- **Tests unitaires** avec Jest (chaque composant)
-- **Tests d'intégration** (API endpoints)
+- Tests unitaires avec Jest (chaque composant)
+- Tests d'intégration (API endpoints)
 ```
 ### CI/CD et Déploiement
 
