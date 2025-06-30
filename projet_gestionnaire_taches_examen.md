@@ -63,9 +63,10 @@ projet-gestionnaire-taches/
 3. **Métriques de couverture de code**
 
 **Bonus(non obligatoire)**
-4. **Tests unitaires** avec Jest (chaque composant)
-5. **Tests d'intégration** (API endpoints)
-
+```
+- **Tests unitaires** avec Jest (chaque composant)
+- **Tests d'intégration** (API endpoints)
+```
 ### CI/CD et Déploiement
 
 #### Pipeline CI/CD :
