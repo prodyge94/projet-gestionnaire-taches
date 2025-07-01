@@ -9,9 +9,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-  "test:unit": "jest tests/unit.test.js",
-  "test:integration": "jest tests/integration.test.js",
-  "test:e2e": "node tests/selenium.test.js"
+  "test:unit": "sudo jest tests/unit.test.js",
+  "test:integration": "sudo jest tests/integration.test.js",
+  "test:e2e": "sudo node tests/selenium.test.js"
 
   },
   "dependencies": {

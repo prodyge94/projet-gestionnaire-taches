@@ -44,13 +44,13 @@ jobs:
           sleep 20  
 
       - name: Run unit tests
-        run: sudo npm run test:unit
+        run: npm run test:unit
         working-directory: ./backend
 
       - name: Run integration tests
-        run: sudo npm run test:integration
+        run: npm run test:integration
         working-directory: ./backend
 
       - name: Run e2e tests
-        run: sudo npm run test:e2e
+        run: npm run test:e2e
         working-directory: ./backend
