@@ -9,9 +9,11 @@ on:
 jobs:
   backend-tests:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
 
     steps:
-    
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -19,22 +21,27 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
-          
-      - name: Install dependencies (backend)
+
+      - name: Install backend dependencies
         run: npm install
         working-directory: ./backend
 
-      - name: Install dependencies (frontend)
+      - name: Install frontend dependencies
         run: npm install
         working-directory: ./frontend
 
-      - name: Start backend server
-        run: npm run dev
+      - name: Start backend
+        run: npm run dev &
         working-directory: ./backend
 
-      - name: Start frontend server
-        run: npm start
+      - name: Start frontend
+        run: npm start &
         working-directory: ./frontend
+
+      - name: Wait for services to be ready
+        run: |
+          echo "Waiting for backend and frontend to be ready..."
+          sleep 20  
 
       - name: Run unit tests
         run: npm run test:unit
