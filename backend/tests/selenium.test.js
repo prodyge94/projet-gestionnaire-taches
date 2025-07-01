@@ -4,6 +4,12 @@ const chrome = require('selenium-webdriver/chrome');
 const options = new chrome.Options();
 options.addArguments('--no-sandbox');
 options.addArguments('--disable-dev-shm-usage');
+options.addArguments('--headless');
+options.addArguments('--disable-gpu');
+options.addArguments('--disable-web-security');
+options.addArguments('--disable-features=VizDisplayCompositor');
+options.addArguments('--remote-debugging-port=9222');
+options.addArguments('--user-data-dir=/tmp/chrome-user-data');
 
 (async function testCreateTask() {
   const driver = await new Builder()
@@ -56,9 +62,9 @@ options.addArguments('--disable-dev-shm-usage');
     );
 
     console.log('✅ Test E2E réussi : tâche visible');
-
   } catch (err) {
     console.error('❌ Test E2E échoué :', err.message);
+    process.exit(1);
   } finally {
     await driver.quit();
   }
