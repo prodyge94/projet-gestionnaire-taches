@@ -65,12 +65,7 @@ Password : password
 2. Développer la fonctionnalité
 3. Créer une Pull Request vers `develop`
 4. Review et merge
-
-## Équipe
-
-- **Tech Lead** : [Nom]
-- **DevOps** : [Nom]
-- **Tests** : [Nom]
+5. merge `develop` dans `main`
 
 ## Technologies
 
