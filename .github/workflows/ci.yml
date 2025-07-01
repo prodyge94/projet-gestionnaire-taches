@@ -12,13 +12,13 @@ jobs:
     defaults:
       run:
         shell: bash
-
+    
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
 
@@ -29,6 +29,18 @@ jobs:
       - name: Install frontend dependencies
         run: npm install
         working-directory: ./frontend
+
+      - name: Install Chrome for E2E tests
+        run: |
+          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+
+      - name: Set permissions for test files
+        run: |
+          chmod -R 755 ./backend
+          chmod -R 755 ./frontend
 
       - name: Start backend
         run: npm run dev &
@@ -41,7 +53,7 @@ jobs:
       - name: Wait for services to be ready
         run: |
           echo "Waiting for backend and frontend to be ready..."
-          sleep 20  
+          sleep 20
 
       - name: Run unit tests
         run: npm run test:unit
