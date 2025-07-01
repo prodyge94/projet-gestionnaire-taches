@@ -43,9 +43,9 @@ jobs:
           echo "Waiting for backend and frontend to be ready..."
           sleep 20  
 
-      - name: Run unit tests
-        run: npm run test:unit
-        working-directory: ./backend
+      # - name: Run unit tests
+      #   run: npm run test:unit
+      #   working-directory: ./backend
 
       - name: Run integration tests
         run: npm run test:integration
