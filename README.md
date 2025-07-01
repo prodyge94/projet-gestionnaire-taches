@@ -5,12 +5,12 @@
 Application web de gestion de tâches développée en équipe dans le cadre d'un projet collaboratif.
 
 **Fonctionnalités :**
-🆕 Création, modification et suppression de tâches
-👥 Attribution de tâches à des utilisateurs
-🏷️ Système de priorités et de statuts
-📱 Interface utilisateur responsive
-🔌 API REST pour les opérations CRUD
-🔐 Système d'authentification
+- Création, modification et suppression de tâches
+- Attribution de tâches à des utilisateurs
+- Système de priorités et de statuts
+- Interface utilisateur responsive
+- API REST pour les opérations CRUD
+- Système d'authentification
 
 ## Structure du Projet
 
