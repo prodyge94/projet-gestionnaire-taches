@@ -21,21 +21,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
 
       - name: Install backend dependencies
-        run: npm ci
+        run: npm install
         working-directory: ./backend
 
       - name: Install frontend dependencies
-        run: npm ci
+        run: npm install
         working-directory: ./frontend
-
-      - name: Create test environment file
-        run: |
-          if [ ! -f ./backend/.env.test ]; then
-            cp ./backend/.env.example ./backend/.env.test 2>/dev/null || echo "NODE_ENV=test" > ./backend/.env.test
-          fi
 
       - name: Set permissions for test files
         run: |
@@ -43,39 +36,17 @@ jobs:
           chmod -R 755 ./frontend
 
       - name: Start backend
-        run: |
-          npm run dev > backend.log 2>&1 &
-          echo $! > backend.pid
+        run: npm run dev &
         working-directory: ./backend
 
       - name: Start frontend
-        run: |
-          npm start > frontend.log 2>&1 &
-          echo $! > frontend.pid
+        run: npm start &
         working-directory: ./frontend
 
       - name: Wait for services to be ready
         run: |
           echo "Waiting for backend and frontend to be ready..."
-          timeout=60
-          while [ $timeout -gt 0 ]; do
-            if curl -f http://localhost:3000/health 2>/dev/null && curl -f http://localhost:3001 2>/dev/null; then
-              echo "Services are ready!"
-              break
-            fi
-            echo "Waiting... ($timeout seconds remaining)"
-            sleep 2
-            timeout=$((timeout-2))
-          done
-          
-          if [ $timeout -le 0 ]; then
-            echo "Services failed to start in time"
-            echo "Backend logs:"
-            cat ./backend/backend.log || echo "No backend logs"
-            echo "Frontend logs:"
-            cat ./frontend/frontend.log || echo "No frontend logs"
-            exit 1
-          fi
+          sleep 20
 
       - name: Run unit tests
         run: npm run test:unit
@@ -88,16 +59,3 @@ jobs:
       - name: Run e2e tests
         run: npm run test:e2e
         working-directory: ./backend
-
-      - name: Cleanup processes
-        if: always()
-        run: |
-          if [ -f ./backend/backend.pid ]; then
-            kill $(cat ./backend/backend.pid) 2>/dev/null || true
-          fi
-          if [ -f ./frontend/frontend.pid ]; then
-            kill $(cat ./frontend/frontend.pid) 2>/dev/null || true
-          fi
-          # Nettoyer les ports
-          pkill -f "node.*3000" || true
-          pkill -f "node.*3001" || true
