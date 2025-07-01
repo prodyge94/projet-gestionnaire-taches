@@ -43,14 +43,14 @@ jobs:
           echo "Waiting for backend and frontend to be ready..."
           sleep 20  
 
-      # - name: Run unit tests
-      #   run: npm run test:unit
-      #   working-directory: ./backend
+      - name: Run unit tests
+        run: sudo npm run test:unit
+        working-directory: ./backend
 
       - name: Run integration tests
-        run: npm run test:integration
+        run: sudo npm run test:integration
         working-directory: ./backend
 
       - name: Run e2e tests
-        run: npm run test:e2e
+        run: sudo npm run test:e2e
         working-directory: ./backend
