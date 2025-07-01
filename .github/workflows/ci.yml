@@ -9,29 +9,48 @@ on:
 jobs:
   backend-tests:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
 
     steps:
-    
-      name: Checkout code
-          uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-          
-      name: Setup Node.js
-          uses: actions/setup-node@v3
-          with:
-            node-version: 20
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
 
-          
-      name: Install dependencies (backend)
-          run: npm install
-          working-directory: ./backend
+      - name: Install backend dependencies
+        run: npm install
+        working-directory: ./backend
 
-          
-      name: Run unit tests
-          run: npm run test:unit
-          working-directory: ./backend
+      - name: Install frontend dependencies
+        run: npm install
+        working-directory: ./frontend
 
-          
-      name: Run integration tests
-          run: npm run test:integration
-          working-directory: ./backend
+      - name: Start backend
+        run: npm run dev &
+        working-directory: ./backend
+
+      - name: Start frontend
+        run: npm start &
+        working-directory: ./frontend
+
+      - name: Wait for services to be ready
+        run: |
+          echo "Waiting for backend and frontend to be ready..."
+          sleep 20  
+
+      - name: Run unit tests
+        run: npm run test:unit
+        working-directory: ./backend
+
+      - name: Run integration tests
+        run: npm run test:integration
+        working-directory: ./backend
+
+      - name: Run e2e tests
+        run: npm run test:e2e
+        working-directory: ./backend
