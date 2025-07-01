@@ -1,5 +1,3 @@
-# taskmanagement
-Application de gestion de tâches
 # Gestionnaire de Tâches Web
 
 ## Description
