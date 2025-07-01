@@ -13,25 +13,29 @@ jobs:
     steps:
     
       name: Checkout code
-          uses: actions/checkout@v3
+      uses: actions/checkout@v3
 
           
       name: Setup Node.js
-          uses: actions/setup-node@v3
-          with:
-            node-version: 20
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20
 
           
       name: Install dependencies (backend)
-          run: npm install
-          working-directory: ./backend
+      run: npm install
+      working-directory: ./backend
 
           
       name: Run unit tests
-          run: npm run test:unit
-          working-directory: ./backend
+      run: npm run test:unit
+      working-directory: ./backend
 
           
       name: Run integration tests
-          run: npm run test:integration
-          working-directory: ./backend
+      run: npm run test:integration
+      working-directory: ./backend
+
+      name: Run e2e tests
+      run: npm run test:e2e
+      working-directory: ./backend
