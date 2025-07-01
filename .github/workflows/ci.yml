@@ -1,10 +1,5 @@
 name: CI/CD - Backend Tests
 
-permissions:
-  contents: read
-  actions: read
-  checks: write
-
 on:
   push:
     branches: [ develop ]
@@ -14,65 +9,95 @@ on:
 jobs:
   backend-tests:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
     
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
-          cache-dependency-path: |
-            backend/package-lock.json
-            frontend/package-lock.json
-            
+
       - name: Install backend dependencies
         run: npm ci
         working-directory: ./backend
-        
+
       - name: Install frontend dependencies
         run: npm ci
         working-directory: ./frontend
-        
-      - name: Make scripts executable
+
+      - name: Create test environment file
         run: |
-          chmod +x node_modules/.bin/* || true
-        working-directory: ./backend
-        
+          if [ ! -f ./backend/.env.test ]; then
+            cp ./backend/.env.example ./backend/.env.test 2>/dev/null || echo "NODE_ENV=test" > ./backend/.env.test
+          fi
+
+      - name: Set permissions for test files
+        run: |
+          chmod -R 755 ./backend
+          chmod -R 755 ./frontend
+
       - name: Start backend
         run: |
-          npm run dev &
+          npm run dev > backend.log 2>&1 &
           echo $! > backend.pid
         working-directory: ./backend
-        
+
       - name: Start frontend
         run: |
-          npm start &
+          npm start > frontend.log 2>&1 &
           echo $! > frontend.pid
         working-directory: ./frontend
-        
-      - name: Wait for services
+
+      - name: Wait for services to be ready
         run: |
-          echo "Waiting for services to start..."
-          timeout 60 bash -c 'until curl -f http://localhost:3000/health > /dev/null 2>&1; do sleep 2; done' || echo "Backend health check timeout"
-          timeout 60 bash -c 'until curl -f http://localhost:3001 > /dev/null 2>&1; do sleep 2; done' || echo "Frontend health check timeout"
+          echo "Waiting for backend and frontend to be ready..."
+          timeout=60
+          while [ $timeout -gt 0 ]; do
+            if curl -f http://localhost:3000/health 2>/dev/null && curl -f http://localhost:3001 2>/dev/null; then
+              echo "Services are ready!"
+              break
+            fi
+            echo "Waiting... ($timeout seconds remaining)"
+            sleep 2
+            timeout=$((timeout-2))
+          done
           
+          if [ $timeout -le 0 ]; then
+            echo "Services failed to start in time"
+            echo "Backend logs:"
+            cat ./backend/backend.log || echo "No backend logs"
+            echo "Frontend logs:"
+            cat ./frontend/frontend.log || echo "No frontend logs"
+            exit 1
+          fi
+
       - name: Run unit tests
         run: npm run test:unit
         working-directory: ./backend
-        
+
       - name: Run integration tests
         run: npm run test:integration
         working-directory: ./backend
-        
+
       - name: Run e2e tests
         run: npm run test:e2e
         working-directory: ./backend
-        
-      - name: Cleanup
+
+      - name: Cleanup processes
         if: always()
         run: |
-          [ -f backend/backend.pid ] && kill $(cat backend/backend.pid) || true
-          [ -f frontend/frontend.pid ] && kill $(cat frontend/frontend.pid) || true
+          if [ -f ./backend/backend.pid ]; then
+            kill $(cat ./backend/backend.pid) 2>/dev/null || true
+          fi
+          if [ -f ./frontend/frontend.pid ]; then
+            kill $(cat ./frontend/frontend.pid) 2>/dev/null || true
+          fi
+          # Nettoyer les ports
+          pkill -f "node.*3000" || true
+          pkill -f "node.*3001" || true
