@@ -8,7 +8,7 @@ import Dashboard from './components/Dashboard';
 import PrivateRoute from './components/PrivateRoute';
 import './App.css';
 
-function App() {
+function App() { 
   return (
     <AuthProvider>
       <TaskProvider>
